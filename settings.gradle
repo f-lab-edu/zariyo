@@ -1,0 +1,3 @@
+rootProject.name = 'zariyo'
+
+include('zariyo-main', 'zariyo-queue')
