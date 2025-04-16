@@ -1,3 +1,4 @@
 plugins {
     id 'zariyo.java-conventions'
+    alias(libs.plugins.spring.boot)
 }
