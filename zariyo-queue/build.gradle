@@ -2,3 +2,9 @@ plugins {
     id 'zariyo.java-conventions'
     alias(libs.plugins.spring.boot)
 }
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework:spring-messaging'
+}
