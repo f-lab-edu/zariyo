@@ -1,6 +1,6 @@
-package com.zariyo.config;
+package com.zariyo.access.config;
 
-import com.zariyo.infra.message.RedisExpiredEventListener;
+import com.zariyo.access.stream.QueueLifecycleListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,16 +11,18 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
 @Configuration
 @RequiredArgsConstructor
-public class RedisMessageConfig {
+public class RedisListenerConfig {
 
-    @Qualifier("mainRedisTemplate")
-    private final StringRedisTemplate mainRedisTemplate;
+    @Qualifier("eventRedisTemplate")
+    private final StringRedisTemplate eventRedisTemplate;
+
+    private final QueueLifecycleListener queueLifecycleListener;
 
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer() {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(mainRedisTemplate.getConnectionFactory()); // 메인 레디스 팩토리 연결
-        container.addMessageListener(new RedisExpiredEventListener(mainRedisTemplate), new PatternTopic("__keyevent@*__:expired"));
+        container.setConnectionFactory(eventRedisTemplate.getConnectionFactory());
+        container.addMessageListener(queueLifecycleListener, new PatternTopic("queue:started"));
         return container;
     }
 }

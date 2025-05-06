@@ -8,17 +8,17 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration
-public class LockRedisConfig {
+public class QueueEventRedisConfig {
 
-    @Value("${redis.lock.host}")
-    private String lockHost;
+    @Value("${redis.event.host}")
+    private String redisHost;
 
-    @Value("${redis.lock.port}")
-    private int lockPort;
+    @Value("${redis.event.port}")
+    private int redisPort;
 
-    @Bean(name = "lockRedisTemplate")
-    public StringRedisTemplate queueRedisTemplate() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(lockHost, lockPort);
+    @Bean(name="queueEventRedisTemplate")
+    public StringRedisTemplate eventRedisTemplate() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
         LettuceConnectionFactory factory = new LettuceConnectionFactory(config);
         factory.afterPropertiesSet();
         return new StringRedisTemplate(factory);

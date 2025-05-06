@@ -24,10 +24,11 @@ public class QueueDto {
                 .build();
     }
 
-    public static QueueDto open(String token) {
+    public static QueueDto currentPosition(int entryNumber, int position) {
         return QueueDto.builder()
-                .queueToken(token)
-                .status(QueueStatus.OPEN)
+                .entryNumber(entryNumber)
+                .position(position)
+                .status(QueueStatus.WAITING)
                 .build();
     }
 }
