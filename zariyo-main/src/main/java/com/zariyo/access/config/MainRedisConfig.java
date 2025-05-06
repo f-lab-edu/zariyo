@@ -1,4 +1,4 @@
-package com.zariyo.config;
+package com.zariyo.access.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

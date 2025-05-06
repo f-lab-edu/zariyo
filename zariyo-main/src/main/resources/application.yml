@@ -1,0 +1,7 @@
+redis:
+  main:
+    host: localhost
+    port: 6379
+  event:
+    host: localhost
+    port: 6381
