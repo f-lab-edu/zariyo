@@ -1,4 +1,4 @@
-package com.zariyo.config;
+package com.zariyo.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,17 +8,16 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration
-public class LockRedisConfig {
+public class MainRedisConfig {
+    @Value("${redis.main.host}")
+    private String redisHost;
 
-    @Value("${redis.lock.host}")
-    private String lockHost;
+    @Value("${redis.main.port}")
+    private int redisPort;
 
-    @Value("${redis.lock.port}")
-    private int lockPort;
-
-    @Bean(name = "lockRedisTemplate")
-    public StringRedisTemplate queueRedisTemplate() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(lockHost, lockPort);
+    @Bean(name = "mainRedisTemplate")
+    public StringRedisTemplate mainRedisTemplate() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
         LettuceConnectionFactory factory = new LettuceConnectionFactory(config);
         factory.afterPropertiesSet();
         return new StringRedisTemplate(factory);

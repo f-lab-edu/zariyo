@@ -1,0 +1,4 @@
+redis:
+  main:
+    host: localhost
+    port: 6379

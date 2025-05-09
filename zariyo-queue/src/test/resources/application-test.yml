@@ -8,4 +8,4 @@ redis:
 
 token:
   cleanup:
-    period: 600000
+    period: 10000
