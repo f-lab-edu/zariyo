@@ -1,4 +1,4 @@
-package com.zariyo.common.validation;
+package com.zariyo.user.security.validation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -13,6 +13,7 @@ public class TokenValidation {
     private final StringRedisTemplate mainRedisTemplate;
 
     private static final String MAIN_TOKEN_KEY = "main:";
+    private static final String MAIN_BLACKLIST_KEY = "blacklist";
 
     public boolean validateAndRefresh(String token) {
         String key = MAIN_TOKEN_KEY + token;
@@ -25,4 +26,13 @@ public class TokenValidation {
         return false;
     }
 
+    public boolean isBlacklisted(String token) {
+        String key = MAIN_BLACKLIST_KEY + token;
+        Boolean exists = mainRedisTemplate.hasKey(key);
+        return exists != null && exists;
+    }
+
+    public void saveBlacklistToken(String token, long remaining) {
+        mainRedisTemplate.opsForValue().set(MAIN_BLACKLIST_KEY + token, "1", remaining, TimeUnit.MILLISECONDS);
+    }
 }
