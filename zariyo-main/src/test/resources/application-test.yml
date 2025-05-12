@@ -1,0 +1,8 @@
+jwt:
+  secret: '745d3572e246594ce88eedf5ccc3fb8c3de7c649a22636126b20a6c4e33fe44d'
+  expiration: 3600000
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
