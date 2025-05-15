@@ -1,0 +1,79 @@
+name: CD - Docker Build & Deploy to NCP
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      NCP_HOST: ${{ secrets.NCP_HOST }}
+      NCP_USER: ${{ secrets.NCP_USER }}
+      NCP_SSH_KEY: ${{ secrets.NCP_SSH_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant Gradle permission
+        run: chmod +x ./gradlew
+
+      - name: Build Spring Boot JARs
+        run: ./gradlew :zariyo-main:bootJar :zariyo-queue:bootJar
+
+      - name: Docker Login
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Build & Push zariyo-main Docker image
+        run: |
+          docker build \
+            --build-arg JWT_SECRET=$JWT_SECRET \
+            --build-arg DB_USERNAME=$DB_USERNAME \
+            --build-arg DB_PASSWORD=$DB_PASSWORD \
+            -t $DOCKER_USERNAME/zariyo-main ./zariyo-main
+          docker push $DOCKER_USERNAME/zariyo-main
+
+      - name: Build & Push zariyo-queue Docker image
+        run: |
+          docker build \
+            --build-arg JWT_SECRET=$JWT_SECRET \
+            --build-arg DB_USERNAME=$DB_USERNAME \
+            --build-arg DB_PASSWORD=$DB_PASSWORD \
+            -t $DOCKER_USERNAME/zariyo-queue ./zariyo-queue
+          docker push $DOCKER_USERNAME/zariyo-queue
+
+      - name: Deploy to Naver Cloud Server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ env.NCP_HOST }}
+          username: ${{ env.NCP_USER }}
+          key: ${{ env.NCP_SSH_KEY }}
+          script: |
+            docker pull $DOCKER_USERNAME/zariyo-main
+            docker pull $DOCKER_USERNAME/zariyo-queue
+            docker stop zariyo-main || true && docker rm zariyo-main || true
+            docker stop zariyo-queue || true && docker rm zariyo-queue || true
+            docker run -d --name zariyo-main --network host \
+              -e JWT_SECRET=$JWT_SECRET \
+              -e DB_USERNAME=$DB_USERNAME \
+              -e DB_PASSWORD=$DB_PASSWORD \
+              $DOCKER_USERNAME/zariyo-main
+            docker run -d --name zariyo-queue --network host \
+              -e JWT_SECRET=$JWT_SECRET \
+              -e DB_USERNAME=$DB_USERNAME \
+              -e DB_PASSWORD=$DB_PASSWORD \
+              $DOCKER_USERNAME/zariyo-queue
