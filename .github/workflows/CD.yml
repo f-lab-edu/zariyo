@@ -33,19 +33,21 @@ jobs:
 
       - name: Build & Push zariyo-main Docker image
         run: |
-          docker buildx build zariyo-main \
+          docker buildx build \
             --build-arg JWT_SECRET=${JWT_SECRET} \
             --build-arg DB_USERNAME=${DB_USERNAME} \
             --build-arg DB_PASSWORD=${DB_PASSWORD} \
             -t ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest \
-            -f zariyo-main/Dockerfile
+            -f zariyo-main/Dockerfile \
+            zariyo-main
           docker push ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
 
       - name: Build & Push zariyo-queue Docker image
         run: |
-          docker buildx build zariyo-queue \
+          docker buildx build \
             -t ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest \
-            -f zariyo-queue/Dockerfile
+            -f zariyo-queue/Dockerfile \
+            zariyo-queue
           docker push ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest
 
       - name: Deploy to Naver Cloud Server via SSH
