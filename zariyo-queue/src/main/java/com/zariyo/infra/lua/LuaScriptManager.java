@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class LuaScriptManager {
             script.setResultType(resultType);
             scripts.put(key, script);
         } catch (IOException e) {
+            log.info("스크립트 로드 실패: {}", key, e);
             throw new LuaScriptException(ErrorCode.LUA_ERROR);
         }
     }
