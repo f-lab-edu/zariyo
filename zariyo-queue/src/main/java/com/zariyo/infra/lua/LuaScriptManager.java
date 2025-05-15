@@ -32,7 +32,7 @@ public class LuaScriptManager {
     private <T> void loadScript(String key, String path, Class<T> resultType) {
         try {
             Resource resource = new ClassPathResource(path);
-            String lua = Files.readString(resource.getFile().toPath());
+            String lua = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             DefaultRedisScript<T> script = new DefaultRedisScript<>();
             script.setScriptText(lua);
             script.setResultType(resultType);
