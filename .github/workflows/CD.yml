@@ -46,8 +46,8 @@ jobs:
       - name: Deploy to Naver Cloud via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.NCP_HOST}}
-          username: ${{ secrets.NCP_USER}}
+          host: ${{ secrets.NCP_HOST }}
+          username: ${{ secrets.NCP_USER }}
           key: ${{ secrets.NCP_SSH_KEY }}
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
@@ -57,9 +57,9 @@ jobs:
             docker stop zariyo-queue || true && docker rm zariyo-queue || true
 
             docker run -d --name zariyo-main --network host \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
+              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
 
             docker run -d --name zariyo-queue --network host \
