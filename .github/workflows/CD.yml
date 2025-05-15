@@ -39,7 +39,7 @@ jobs:
             --build-arg DB_PASSWORD=${DB_PASSWORD} \
             -t ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest \
             -f zariyo-main/Dockerfile \
-            zariyo-main
+            ./zariyo-main
           docker push ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
 
       - name: Build & Push zariyo-queue Docker image
@@ -47,7 +47,7 @@ jobs:
           docker buildx build \
             -t ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest \
             -f zariyo-queue/Dockerfile \
-            zariyo-queue
+            ./zariyo-queue
           docker push ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest
 
       - name: Deploy to Naver Cloud Server via SSH
