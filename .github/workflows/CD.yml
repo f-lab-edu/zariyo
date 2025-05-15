@@ -46,9 +46,9 @@ jobs:
       - name: Deploy to Naver Cloud via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.NCP_HOST}}
+          username: ${{ secrets.NCP_USER}}
+          key: ${{ secrets.NCP_SSH_KEY }}
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
             docker pull ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest
