@@ -6,3 +6,11 @@ plugins {
 dependencies {
     implementation "org.redisson:redisson-spring-boot-starter:${libs.versions.redisson.get()}"
 }
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from('src/main/resources') {
+        include '**/*.lua'
+        into '.'
+    }
+}
