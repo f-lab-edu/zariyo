@@ -18,6 +18,7 @@ jobs:
       NCP_HOST: ${{ secrets.NCP_HOST }}
       NCP_USER: ${{ secrets.NCP_USER }}
       NCP_SSH_KEY: ${{ secrets.NCP_SSH_KEY }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
     steps:
       - name: Checkout code
@@ -44,7 +45,8 @@ jobs:
             --build-arg JWT_SECRET=$JWT_SECRET \
             --build-arg DB_USERNAME=$DB_USERNAME \
             --build-arg DB_PASSWORD=$DB_PASSWORD \
-            -t $DOCKER_USERNAME/zariyo-main ./zariyo-main
+            -t $DOCKER_USERNAME/zariyo-main \
+            zariyo-main
           docker push $DOCKER_USERNAME/zariyo-main
 
       - name: Build & Push zariyo-queue Docker image
@@ -53,7 +55,8 @@ jobs:
             --build-arg JWT_SECRET=$JWT_SECRET \
             --build-arg DB_USERNAME=$DB_USERNAME \
             --build-arg DB_PASSWORD=$DB_PASSWORD \
-            -t $DOCKER_USERNAME/zariyo-queue ./zariyo-queue
+            -t $DOCKER_USERNAME/zariyo-queue \
+            zariyo-queue
           docker push $DOCKER_USERNAME/zariyo-queue
 
       - name: Deploy to Naver Cloud Server via SSH
@@ -77,3 +80,13 @@ jobs:
               -e DB_USERNAME=$DB_USERNAME \
               -e DB_PASSWORD=$DB_PASSWORD \
               $DOCKER_USERNAME/zariyo-queue
+
+      - name: Notify to Discord
+        if: always()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+              "content": "🚀 CD 완료: `${{ github.workflow }}`\n🔀 브랜치: `${{ github.ref_name }}`\n✅ 상태: `${{ job.status }}`\n🔗 [배포 로그 보기](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            }' \
+            $DISCORD_WEBHOOK_URL
