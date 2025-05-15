@@ -1,14 +1,18 @@
 plugins {
     id 'java'
+    id 'jacoco'
 }
 
 group = 'com.zariyo'
-version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(libs.versions.java.get().toInteger())
     }
+}
+
+jacoco {
+    toolVersion = "${libs.versions.jacoco.get()}"
 }
 
 repositories {
@@ -27,6 +31,15 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.testcontainers:testcontainers'
     testImplementation 'org.testcontainers:junit-jupiter'
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
 }
 
 tasks.named('test') {
