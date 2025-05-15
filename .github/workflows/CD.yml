@@ -33,17 +33,19 @@ jobs:
 
       - name: Build & Push zariyo-main Docker image
         run: |
-          docker buildx build \
+          docker buildx build zariyo-main \
             --build-arg JWT_SECRET=${JWT_SECRET} \
             --build-arg DB_USERNAME=${DB_USERNAME} \
             --build-arg DB_PASSWORD=${DB_PASSWORD} \
-            -t ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest ./zariyo-main
+            -t ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest \
+            -f zariyo-main/Dockerfile
           docker push ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
 
       - name: Build & Push zariyo-queue Docker image
         run: |
-          docker buildx build \
-            -t ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest ./zariyo-queue
+          docker buildx build zariyo-queue \
+            -t ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest \
+            -f zariyo-queue/Dockerfile
           docker push ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest
 
       - name: Deploy to Naver Cloud Server via SSH
@@ -68,12 +70,12 @@ jobs:
             docker run -d --name zariyo-queue --network host \
               ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest
 
-      - name: Notify Discord
+      - name: Notify to Discord
         if: always()
         run: |
           curl -H "Content-Type: application/json" \
             -X POST \
             -d '{
-              "content": "🚀 *CD 완료!* `main` 브랜치가 DockerHub와 클라우드 서버에 배포되었습니다.\n📦 이미지: https://hub.docker.com/u/${{ secrets.DOCKER_USERNAME }}"
+              "content": "🚀 CD 완료: `${{ github.workflow }}`\n🔀 브랜치: `${{ github.ref_name }}`\n✅ 상태: `${{ job.status }}`\n🔗 [배포 로그 보기](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
             }' \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
