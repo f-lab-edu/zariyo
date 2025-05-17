@@ -29,8 +29,7 @@ public abstract class TestContainerConfig {
             .withExposedPorts(6379)
             .withCommand("redis-server")
             .waitingFor(Wait.forListeningPort())
-            .withCreateContainerCmdModifier(cmd -> cmd.withName("main-redis-test"))
-            .withReuse(true);
+            .withReuse(false);
 
 
     @DynamicPropertySource

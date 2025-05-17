@@ -1,11 +1,14 @@
+server:
+    port: 8081
+
 redis:
   main:
-    host: localhost
+    host: ${DB_CLOUD_HOST}
     port: 6379
   queue:
-    host: localhost
+    host: ${DB_CLOUD_HOST}
     port: 6380
 
 token:
   cleanup:
-    period: 600000
+    period: 300000

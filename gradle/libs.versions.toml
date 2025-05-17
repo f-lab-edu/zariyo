@@ -4,6 +4,7 @@ lombok = "1.18.34"
 java = "17"
 redisson = "3.46.0"
 jwt = "0.11.5"
+jacoco = "0.8.11"
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "boot" }

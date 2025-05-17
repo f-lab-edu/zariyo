@@ -15,17 +15,15 @@ public abstract class TestContainerConfig {
     protected static GenericContainer<?> mainRedis = new GenericContainer<>("redis:7.2")
             .withExposedPorts(6379)
             .withCommand("redis-server")
-            .withReuse(true)
-            .waitingFor(Wait.forListeningPort())
-            .withCreateContainerCmdModifier(cmd -> cmd.withName("main-redis-test"));
+            .withReuse(false)
+            .waitingFor(Wait.forListeningPort());
 
     @Container
     protected static GenericContainer<?> queueRedis = new GenericContainer<>("redis:7.2")
             .withExposedPorts(6379)
             .withCommand("redis-server")
-            .withReuse(true)
-            .waitingFor(Wait.forListeningPort())
-            .withCreateContainerCmdModifier(cmd -> cmd.withName("queue-redis-test"));
+            .withReuse(false)
+            .waitingFor(Wait.forListeningPort());
 
     @DynamicPropertySource
     static void configureRedis(DynamicPropertyRegistry registry) {
