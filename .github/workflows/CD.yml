@@ -56,13 +56,15 @@ jobs:
             docker stop zariyo-main || true && docker rm zariyo-main || true
             docker stop zariyo-queue || true && docker rm zariyo-queue || true
 
-            docker run -d --name zariyo-main --network host \
+            docker run -d --name zariyo-main \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              -e DB_CLOUD_HOST="${{ secrets.DB_CLOUD_HOST }}" \
               ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
 
-            docker run -d --name zariyo-queue --network host \
+            docker run -d --name zariyo-queue \
+              -e DB_CLOUD_HOST="${{ secrets.DB_CLOUD_HOST }}" \
               ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest
 
       - name: Notify to Discord
