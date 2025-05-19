@@ -1,6 +1,6 @@
 redis:
   main:
-    host: ${DB_CLOUD_HOST}
+    host: ${REDIS_MAIN_HOST}
     port: 6379
 
 jwt:
