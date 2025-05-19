@@ -3,11 +3,11 @@ server:
 
 redis:
   main:
-    host: ${DB_CLOUD_HOST}
+    host: ${REDIS_MAIN_HOST}
     port: 6379
   queue:
-    host: ${DB_CLOUD_HOST}
-    port: 6380
+    host: ${REDIS_QUEUE_HOST}
+    port: 6379
 
 token:
   cleanup:
