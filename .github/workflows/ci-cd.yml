@@ -132,6 +132,7 @@ jobs:
             docker stop zariyo-queue || true && docker rm zariyo-queue || true
 
             docker run -d --name zariyo-main \
+              -p 8080:8080 \
               -e REDIS_MAIN_HOST="${{ secrets.REDIS_MAIN_HOST }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
@@ -140,6 +141,7 @@ jobs:
               ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
 
             docker run -d --name zariyo-queue \
+              -p 8081:8081 \
               -e REDIS_MAIN_HOST="${{ secrets.REDIS_MAIN_HOST }}" \
               -e REDIS_QUEUE_HOST="${{ secrets.REDIS_QUEUE_HOST }}" \
               ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest
