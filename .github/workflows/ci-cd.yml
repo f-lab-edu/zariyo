@@ -132,6 +132,7 @@ jobs:
             docker stop zariyo-queue || true && docker rm zariyo-queue || true
 
             docker run -d --name zariyo-main \
+              -e REDIS_MAIN_HOST="${{ secrets.REDIS_MAIN_HOST }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
@@ -139,7 +140,8 @@ jobs:
               ${{ secrets.DOCKER_USERNAME }}/zariyo-main:latest
 
             docker run -d --name zariyo-queue \
-              -e DB_CLOUD_HOST="${{ secrets.DB_CLOUD_HOST }}" \
+              -e REDIS_MAIN_HOST="${{ secrets.REDIS_MAIN_HOST }}" \
+              -e REDIS_QUEUE_HOST="${{ secrets.REDIS_QUEUE_HOST }}" \
               ${{ secrets.DOCKER_USERNAME }}/zariyo-queue:latest
 
       # 8. Discord로 CD 완료 알림 전송
