@@ -72,7 +72,7 @@ jobs:
 
   deploy:
     # main 브랜치에 push된 경우에만 실행
-    if: github.ref == 'refs/heads/main'
+    if: github.ref_name == 'main'
 
     needs: build
     runs-on: ubuntu-latest
