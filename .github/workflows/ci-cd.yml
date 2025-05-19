@@ -15,7 +15,6 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       # 1. GitHub 저장소 체크아웃
