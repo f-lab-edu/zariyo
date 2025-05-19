@@ -37,8 +37,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
                         .requestMatchers(
-                                "**/reserve",
-                                "/concerts/**/seats"
+                                "/concerts/reserve",
+                                "/concerts/*/seats"
                         ).authenticated()
                         .anyRequest().permitAll()
                 )
