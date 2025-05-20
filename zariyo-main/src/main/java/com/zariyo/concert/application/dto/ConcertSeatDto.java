@@ -1,4 +1,4 @@
-package com.zariyo.concert.api.response;
+package com.zariyo.concert.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 
 @Getter
 @Builder
-public class Seat {
+public class ConcertSeatDto {
     private long scheduleSeatId;
     private String block;
-    private String seatNumber;
+    private int seatNumber;
     private String grade;
     private BigDecimal price;
 }

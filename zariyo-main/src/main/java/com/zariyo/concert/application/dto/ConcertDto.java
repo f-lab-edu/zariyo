@@ -1,12 +1,12 @@
-package com.zariyo.concert.api.response;
+package com.zariyo.concert.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class Concert {
+public class ConcertDto {
     private long concertId;
-    private String concertName;
+    private String title;
     private String address;
 }

@@ -1,11 +1,11 @@
-package com.zariyo.concert.api.response;
+package com.zariyo.concert.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class ConcertFile {
+public class ConcertFileDto {
     private long fileId;
     private String fileName;
     private String filePath;
