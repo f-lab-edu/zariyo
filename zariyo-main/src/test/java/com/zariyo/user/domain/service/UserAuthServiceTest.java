@@ -47,7 +47,7 @@ class UserAuthServiceTest {
 
         when(userJpaRepository.findByEmail("test@example.com")).thenReturn(Optional.of(savedUser));
         when(passwordEncoder.matches("testPassword", "testPassword")).thenReturn(true);
-        when(jwtTokenProvider.generateToken("test@example.com")).thenReturn("jwt-token");
+        when(jwtTokenProvider.generateToken("test@example.com",1L)).thenReturn("jwt-token");
 
         // when
         UserDto result = userAuthService.login(loginRequest);
