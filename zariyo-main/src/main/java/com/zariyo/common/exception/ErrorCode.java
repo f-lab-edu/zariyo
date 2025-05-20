@@ -9,7 +9,10 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     LOGOUT_FAILED(HttpStatus.BAD_REQUEST, "로그아웃 요청이 올바르지 않습니다."),
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),;
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
+    CONCERT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 공연입니다."),
+    SEAT_ALREADY_RESERVED(HttpStatus.CONFLICT, "이미 예약된 좌석입니다."),
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 공연 일정입니다.");
 
     private final HttpStatus status;
     private final String message;

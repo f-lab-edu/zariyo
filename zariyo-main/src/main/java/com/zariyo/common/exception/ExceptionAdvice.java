@@ -1,8 +1,6 @@
 package com.zariyo.common.exception;
 
-import com.zariyo.common.exception.custom.LoginFailedException;
-import com.zariyo.common.exception.custom.LogoutFailedException;
-import com.zariyo.common.exception.custom.SingupException;
+import com.zariyo.common.exception.custom.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,6 +20,16 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(LogoutFailedException.class)
     public ResponseEntity<ErrorMessage> handleLogoutFailedException(LogoutFailedException e) {
+        return ResponseEntity.status(e.getErrorCode().getStatus()).body(ErrorMessage.withErrorCode(e.getErrorCode()));
+    }
+
+    @ExceptionHandler(ConcertNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleConcertNotFoundException(ConcertNotFoundException e) {
+        return ResponseEntity.status(e.getErrorCode().getStatus()).body(ErrorMessage.withErrorCode(e.getErrorCode()));
+    }
+
+    @ExceptionHandler(DuplicateSeatReservationException.class)
+    public ResponseEntity<ErrorMessage> handleDuplicateSeatReservationException(DuplicateSeatReservationException e) {
         return ResponseEntity.status(e.getErrorCode().getStatus()).body(ErrorMessage.withErrorCode(e.getErrorCode()));
     }
 }
