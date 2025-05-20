@@ -12,5 +12,7 @@ dependencies {
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${libs.versions.jwt.get()}"
     runtimeOnly "io.jsonwebtoken:jjwt-jackson:${libs.versions.jwt.get()}"
 
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.swagger.get()}"
+
     testImplementation 'org.testcontainers:mysql'
 }

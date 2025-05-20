@@ -5,6 +5,7 @@ java = "17"
 redisson = "3.46.0"
 jwt = "0.11.5"
 jacoco = "0.8.11"
+swagger = "2.8.8"
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "boot" }

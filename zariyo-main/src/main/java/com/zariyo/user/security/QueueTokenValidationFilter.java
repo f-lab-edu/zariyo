@@ -26,6 +26,12 @@ public class QueueTokenValidationFilter extends OncePerRequestFilter {
 
         String queueToken = request.getHeader("X-QUEUE-TOKEN");
 
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/swagger-ui") || uri.startsWith("/v3/api-docs")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Queue 토큰이 없는 경우
         if (queueToken == null || queueToken.isBlank()) {
             sendQueueTokenError(response, "QUEUE_TOKEN_REQUIRED", "대기열 토큰이 필요합니다.");
