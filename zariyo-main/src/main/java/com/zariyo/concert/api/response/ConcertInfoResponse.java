@@ -1,5 +1,9 @@
 package com.zariyo.concert.api.response;
 
+import com.zariyo.concert.application.dto.ConcertDto;
+import com.zariyo.concert.application.dto.ConcertFileDto;
+import com.zariyo.concert.application.dto.GradePriceDto;
+import com.zariyo.concert.application.dto.ScheduleDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,9 +12,8 @@ import java.util.List;
 @Getter
 @Builder
 public class ConcertInfoResponse {
-    private Concert concert;
-    private String address;
-    private List<Schedule> schedules;
-    private List<GradePrice> gradePrices;
-    private List<ConcertFile> files;
+    private ConcertDto concert;
+    private List<ScheduleDto> schedules;
+    private List<GradePriceDto> gradePrices;
+    private List<ConcertFileDto> files;
 }

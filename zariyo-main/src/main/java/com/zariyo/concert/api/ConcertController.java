@@ -1,6 +1,9 @@
 package com.zariyo.concert.api;
 
+import com.zariyo.concert.api.request.ReserveSeatRequest;
 import com.zariyo.concert.api.response.*;
+import com.zariyo.concert.application.dto.ConcertSeatDto;
+import com.zariyo.concert.application.facade.ConcertFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -9,14 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/concerts")
 @RequiredArgsConstructor
 public class ConcertController {
+
+    private final ConcertFacade concertFacade;
 
     @Operation(
             summary = "콘서트 상세 정보 조회",
@@ -61,7 +64,7 @@ public class ConcertController {
                                                   "fileId": 1,
                                                   "fileName": "concert.jpg",
                                                   "filePath": "/concerts/1/concert.jpg",
-                                                    "fileType": "POSTER"
+                                                  "fileType": "POSTER"
                                                 },
                                                 {
                                                   "fileId": 2,
@@ -79,23 +82,7 @@ public class ConcertController {
     )
     @GetMapping("/{concertId}")
     public ResponseEntity<ConcertInfoResponse> getConcertInfo(@PathVariable("concertId") long concertId) {
-        // TODO: 콘서트 정보 조회 로직 구현 (콘서트명, 장소, { 콘서트날짜, 회차 }, 좌석 등급별 가격, 공연설명)
-        return ResponseEntity.ok(ConcertInfoResponse.builder().
-        concert(Concert.builder().concertId(1).concertName("zariyo 콘서트").address("서울특별시 송파구 올림픽로 424").build())
-                .schedules(List.of(
-                        Schedule.builder().scheduleId(1).concertDate(LocalDateTime.of(2025, 5, 1, 9, 0)).build(),
-                        Schedule.builder().scheduleId(2).concertDate(LocalDateTime.of(2025, 5, 1, 14, 0)).build()
-                ))
-                .gradePrices(List.of(
-                        GradePrice.builder().grade("VIP").price(BigDecimal.valueOf(200000)).build(),
-                        GradePrice.builder().grade("R").price(BigDecimal.valueOf(150000)).build(),
-                        GradePrice.builder().grade("S").price(BigDecimal.valueOf(100000)).build()
-                ))
-                .files(List.of(
-                        ConcertFile.builder().fileId(1).fileName("concert.jpg").filePath("/concerts/1/concert.jpg").fileType("POSTER").build(),
-                        ConcertFile.builder().fileId(2).fileName("poster.jpg").filePath("/concerts/1/poster.jpg").fileType("DESCRIPTION").build()
-                ))
-                .build());
+        return ResponseEntity.ok(concertFacade.getConcertInfo(concertId));
     }
 
     @Operation(
@@ -162,18 +149,8 @@ public class ConcertController {
             )
     )
     @PostMapping("/reserve")
-    public ResponseEntity<ReservationResponse> reserveConcertSeats(@RequestBody List<Long> scheduleSeatIds) {
-        // TODO: 콘서트 좌석 예약 로직 구현 (결제창 호출, 예약 성공 시 예약 정보 반환)
-
-        return ResponseEntity.ok(ReservationResponse.builder()
-                .reservationId(1)
-                .concert(Concert.builder().concertId(1).concertName("zariyo 콘서트").address("서울특별시 송파구 올림픽로 424").build())
-                .schedule(Schedule.builder().scheduleId(1).concertDate(LocalDateTime.of(2025, 5, 1, 9, 0)).build())
-                .seats(List.of(
-                        Seat.builder().scheduleSeatId(1).block("A").seatNumber("2").grade("VIP").price(BigDecimal.valueOf(200000)).build(),
-                        Seat.builder().scheduleSeatId(2).block("A").seatNumber("2").grade("VIP").price(BigDecimal.valueOf(200000)).build()
-                ))
-                .build());
+    public ResponseEntity<ReservationResponse> reserveConcertSeats(@RequestBody ReserveSeatRequest reserveSeats) {
+        return ResponseEntity.ok(concertFacade.reserveConcertSeats(reserveSeats));
     }
 
 
@@ -214,15 +191,9 @@ public class ConcertController {
                     )
             }
     )
-    @GetMapping("/{concertId}/seats")
-    public ResponseEntity<List<Seat>> getConcertSeats(@PathVariable("concertId") long concertId) {
-        // TODO: 콘서트 예약시 좌석리스트 조회 로직 구현 (회차 좌석 ID, 좌석구역, 좌석번호, 좌석등급, 가격)
-
-        return ResponseEntity.ok(List.of(
-                Seat.builder().scheduleSeatId(1).block("A").seatNumber("1").grade("VIP").price(BigDecimal.valueOf(200000)).build(),
-                Seat.builder().scheduleSeatId(2).block("A").seatNumber("2").grade("VIP").price(BigDecimal.valueOf(200000)).build(),
-                Seat.builder().scheduleSeatId(3).block("A").seatNumber("3").grade("VIP").price(BigDecimal.valueOf(200000)).build()
-        ));
+    @GetMapping("/{scheduleId}/seats")
+    public ResponseEntity<List<ConcertSeatDto>> getAvailableConcertSeats(@PathVariable("scheduleId") long scheduleId) {
+        return ResponseEntity.ok(concertFacade.getAvailableConcertSeats(scheduleId));
     }
 
 }
