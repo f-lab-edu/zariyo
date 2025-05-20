@@ -59,15 +59,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             Claims claims = jwtTokenProvider.getClaims(token);
             String email = claims.getSubject();
+            Long userId = claims.get("userId", Long.class);
 
-            // 현재 권한 없음
+            CustomUserDetails userDetails = new CustomUserDetails(userId, email);
+
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(email, null, List.of());
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             if (isTokenExpiringSoon(claims)) {
-                String newToken = jwtTokenProvider.generateToken(claims.getSubject());
-
+                String newToken = jwtTokenProvider.generateToken(claims.getSubject(), userId);
                 long remaining = claims.getExpiration().getTime() - System.currentTimeMillis();
                 tokenValidation.saveBlacklistToken(token, remaining);
                 response.setHeader("X-NEW-TOKEN", newToken);

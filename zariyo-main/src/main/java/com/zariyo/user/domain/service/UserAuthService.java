@@ -30,14 +30,15 @@ public class UserAuthService {
      * @return UserDto
      */
     public UserDto login(User user) {
-        User findUser = userJpaRepository.findByEmail(user.getEmail())
+        return userJpaRepository.findByEmail(user.getEmail())
+                .map(findUser -> {
+                    if(!passwordEncoder.matches(user.getPassword(), findUser.getPassword())) throw new LoginFailedException(ErrorCode.INVALID_PASSWORD);
+                    return UserDto.loginResponseDto(
+                            findUser,
+                            jwtTokenProvider.generateToken(findUser.getEmail(), findUser.getUserId())
+                    );
+                })
                 .orElseThrow(() -> new LoginFailedException(ErrorCode.USER_NOT_FOUND));
-
-        if (!passwordEncoder.matches(user.getPassword(), findUser.getPassword())) {
-            throw new LoginFailedException(ErrorCode.INVALID_PASSWORD);
-        }
-        String jwtToken = jwtTokenProvider.generateToken(findUser.getEmail());
-        return UserDto.loginResponseDto(findUser, jwtToken);
     }
 
     /**
