@@ -3,8 +3,10 @@ package com.zariyo.concert.application.service;
 import com.zariyo.concert.api.exception.custom.ConcertNotFoundException;
 import com.zariyo.concert.application.dto.*;
 import com.zariyo.concert.domain.entity.Concert;
+import com.zariyo.concert.domain.entity.ConcertFile;
 import com.zariyo.concert.domain.repository.ConcertRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,18 +17,38 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ConcertQueryService {
 
     private final ConcertRepository concertRepository;
 
-    @Transactional(readOnly = true)
+    @Cacheable(
+        value = "concerts",
+        key = "#categoryId + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort.toString()"
+    )
     public ConcertListDTO getConcerts(Pageable pageable, Long categoryId) {
         Page<Concert> concertPage = categoryId != null
                 ? concertRepository.findByCategoryId(categoryId, pageable)
                 : concertRepository.findAll(pageable);
 
         List<ConcertSummary> concerts = concertPage.getContent().stream()
-                .map(ConcertSummary::convertToSummary)
+                .map(concert -> {
+                    String posterUrl = concert.getConcertFiles().stream()
+                            .filter(file -> file.getFileType() == ConcertFile.FileType.POSTER)
+                            .findFirst()
+                            .map(ConcertFile::getFileUrl)
+                            .orElse(null);
+
+                    return ConcertSummary.builder()
+                            .concertId(concert.getConcertId())
+                            .title(concert.getTitle())
+                            .categoryName(concert.getCategory().getCategoryName())
+                            .posterUrl(posterUrl)
+                            .startDate(concert.getStartDate())
+                            .endDate(concert.getEndDate())
+                            .hallName(concert.getConcertHall().getHallName())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return ConcertListDTO.builder()
@@ -38,7 +60,10 @@ public class ConcertQueryService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
+    @Cacheable(
+        value = "concert-detail",
+        key = "#concertId"
+    )
     public ConcertDetailDTO getConcertDetail(Long concertId) {
         Concert concert = concertRepository.findByIdWithDetails(concertId)
                 .orElseThrow(() -> new ConcertNotFoundException("콘서트를 찾을 수 없습니다. ID: " + concertId));
