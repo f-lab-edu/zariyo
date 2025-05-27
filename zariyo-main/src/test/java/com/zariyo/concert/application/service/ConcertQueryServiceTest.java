@@ -239,7 +239,19 @@ class ConcertQueryServiceTest {
                 .build();
 
         // when
-        ConcertSummary summary = ConcertSummary.convertToSummary(concert);
+        ConcertSummary summary = ConcertSummary.builder()
+                .concertId(concert.getConcertId())
+                .title(concert.getTitle())
+                .categoryName(concert.getCategory().getCategoryName())
+                .posterUrl(concert.getConcertFiles().stream()
+                            .filter(file -> file.getFileType() == ConcertFile.FileType.POSTER)
+                            .findFirst()
+                            .map(ConcertFile::getFileUrl)
+                            .orElse(null))
+                .startDate(concert.getStartDate())
+                .endDate(concert.getEndDate())
+                .hallName(concert.getConcertHall().getHallName())
+                .build();
 
         // then
         assertThat(summary.getConcertId()).isEqualTo(1L);

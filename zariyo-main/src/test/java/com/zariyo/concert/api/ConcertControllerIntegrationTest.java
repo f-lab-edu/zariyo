@@ -205,4 +205,54 @@ class ConcertControllerIntegrationTest extends TestContainerConfig {
                 .andExpect(jsonPath("$.concerts").isNotEmpty())
                 .andExpect(jsonPath("$.totalElements").value(3));
     }
+
+    @Test
+    @DisplayName("좌석 조회 API 통합 테스트 - 성공")
+    void getAvailableSeats_Success_API_Integration() throws Exception {
+        // when & then
+        mockMvc.perform(get("/api/concerts/schedules/1/seats")
+                        .header("X-QUEUE-TOKEN", QUEUE_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.scheduleId").value(1))
+                .andExpect(jsonPath("$.availableSeats").isArray())
+                .andExpect(jsonPath("$.availableSeats").isNotEmpty())
+                // 첫 번째 좌석 정보 검증
+                .andExpect(jsonPath("$.availableSeats[0].seatGrade").exists())
+                .andExpect(jsonPath("$.availableSeats[0].block").exists())
+                .andExpect(jsonPath("$.availableSeats[0].seatRow").exists())
+                .andExpect(jsonPath("$.availableSeats[0].seatNumber").exists())
+                .andExpect(jsonPath("$.availableSeats[0].price").exists())
+                // 좌석 등급별 검증
+                .andExpect(jsonPath("$.availableSeats[?(@.seatGrade == 'VIP')]").exists())
+                .andExpect(jsonPath("$.availableSeats[?(@.seatGrade == 'R석')]").exists())
+                .andExpect(jsonPath("$.availableSeats[?(@.seatGrade == 'S석')]").exists());
+    }
+
+    @Test
+    @DisplayName("좌석 조회 API 통합 테스트 - 다양한 스케줄의 좌석 조회")
+    void getAvailableSeats_MultipleSchedules_API_Integration() throws Exception {
+        // when & then - 첫 번째 스케줄 좌석 조회
+        mockMvc.perform(get("/api/concerts/schedules/1/seats")
+                        .header("X-QUEUE-TOKEN", QUEUE_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.scheduleId").value(1))
+                .andExpect(jsonPath("$.allSeats").isArray())
+                .andExpect(jsonPath("$.availableSeats").isArray());
+
+        // when & then - 두 번째 스케줄 좌석 조회
+        mockMvc.perform(get("/api/concerts/schedules/2/seats")
+                        .header("X-QUEUE-TOKEN", QUEUE_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.scheduleId").value(2))
+                .andExpect(jsonPath("$.allSeats").isArray())
+                .andExpect(jsonPath("$.availableSeats").isArray());
+
+        // when & then - 세 번째 스케줄 좌석 조회
+        mockMvc.perform(get("/api/concerts/schedules/3/seats")
+                        .header("X-QUEUE-TOKEN", QUEUE_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.scheduleId").value(3))
+                .andExpect(jsonPath("$.allSeats").isArray())
+                .andExpect(jsonPath("$.availableSeats").isArray());
+    }
 }
