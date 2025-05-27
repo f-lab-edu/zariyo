@@ -1,5 +1,6 @@
 package com.zariyo.concert.api;
 
+import com.zariyo.concert.api.response.AvailableSeatsResponse;
 import com.zariyo.concert.api.response.ConcertDetailResponse;
 import com.zariyo.concert.api.response.ConcertListResponse;
 import com.zariyo.concert.application.facade.ConcertFacade;
@@ -27,5 +28,10 @@ public class ConcertController {
     @GetMapping("/{concertId}")
     public ResponseEntity<ConcertDetailResponse> getConcertDetail(@PathVariable Long concertId) {
         return ResponseEntity.ok(concertFacade.getConcertDetail(concertId));
+    }
+
+    @GetMapping("/schedules/{scheduleId}/seats")
+    public ResponseEntity<AvailableSeatsResponse> getAvailableSeats(@PathVariable Long scheduleId) {
+        return ResponseEntity.ok(concertFacade.getAvailableSeats(scheduleId));
     }
 }
