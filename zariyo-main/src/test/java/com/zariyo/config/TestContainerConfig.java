@@ -1,4 +1,4 @@
-package com.zariyo.user.integration;
+package com.zariyo.config;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -7,35 +7,32 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.Duration;
 
 @SpringBootTest
-@Testcontainers
 @ActiveProfiles("test")
 public abstract class TestContainerConfig {
-    @Container
-    protected static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.36")
-            .withDatabaseName("testdb")
-            .withUsername("root")
-            .withPassword("test")
-            .withReuse(true)
-            .withUrlParam("characterEncoding", "UTF-8")
-            .withUrlParam("serverTimezone", "Asia/Seoul")
-            .waitingFor(Wait.forListeningPort());
+    
+    protected static MySQLContainer<?> mysql;
+    protected static GenericContainer<?> mainRedis;
+    
+    static {
+        mysql = new MySQLContainer<>("mysql:8.4.5")
+                .withDatabaseName("testdb")
+                .withUsername("root")
+                .withPassword("test");
 
-    @Container
-    protected static GenericContainer<?> mainRedis = new GenericContainer<>("redis:7.2")
-            .withExposedPorts(6379)
-            .withCommand("redis-server")
-            .waitingFor(Wait.forListeningPort())
-            .withReuse(false);
+        mainRedis = new GenericContainer<>("redis:7.2")
+                .withExposedPorts(6379)
+                .withCommand("redis-server");
 
+        mysql.start();
+        mainRedis.start();
+    }
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        mysql.start();
-        mainRedis.start();
         registry.add("spring.datasource.url", () -> mysql.getJdbcUrl());
         registry.add("spring.datasource.username", () -> mysql.getUsername());
         registry.add("spring.datasource.password", () -> mysql.getPassword());

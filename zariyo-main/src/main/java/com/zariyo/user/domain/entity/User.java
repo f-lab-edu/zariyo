@@ -1,6 +1,5 @@
 package com.zariyo.user.domain.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,20 +11,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "USERS")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
+    @Column(name = "user_id")
     private Long userId;
 
-    @Column(name= "email")
+    @Column(name = "email")
     private String email;
 
-    @Column(name= "pwd")
+    @Column(name = "pwd")
     private String password;
 
-    @Column(name= "nickName")
+    @Column(name = "nickname")
     private String nickName;
 
     public static User withEncryptedPassword(User user, String password) {
