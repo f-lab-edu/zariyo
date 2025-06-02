@@ -18,6 +18,7 @@ public class ScheduleSeatService {
     private final ScheduleSeatRepository scheduleSeatRepository;
 
     @Cacheable(
+        cacheManager = "localCacheManager",
         value = "available-seats",
         key = "#scheduleId"
     )
@@ -41,6 +42,7 @@ public class ScheduleSeatService {
     }
 
     @Cacheable(
+        cacheManager = "redisCacheManager",
         value = "all-seats",
         key = "#scheduleId"
     )

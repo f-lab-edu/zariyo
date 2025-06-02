@@ -23,6 +23,7 @@ public class ConcertQueryService {
     private final ConcertRepository concertRepository;
 
     @Cacheable(
+        cacheManager = "localCacheManager",
         value = "concerts",
         key = "#categoryId + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort.toString()"
     )
@@ -61,6 +62,7 @@ public class ConcertQueryService {
     }
 
     @Cacheable(
+        cacheManager = "redisCacheManager",
         value = "concert-detail",
         key = "#concertId"
     )
