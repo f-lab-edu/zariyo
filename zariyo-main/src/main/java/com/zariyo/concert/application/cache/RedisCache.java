@@ -14,12 +14,13 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public enum RedisCache {
-    CONCERTS("concerts", Duration.ofHours(24), new TypeReference<ConcertListDTO>() {}),
-    CONCERT_DETAIL("concert-detail", Duration.ofHours(24), new TypeReference<ConcertDetailDTO>() {}),
-    AVAILABLE_SEATS("available-seats", Duration.ofSeconds(3), new TypeReference<AvailableSeatsDto>() {}),
-    ALL_SEATS("all-seats", Duration.ZERO, new TypeReference<List<SeatInfoDto>>() {}); // TTL 없음
+    CONCERTS("concerts", Duration.ofHours(24), new TypeReference<ConcertListDTO>() {}, "local"),
+    CONCERT_DETAIL("concert-detail", Duration.ofHours(24), new TypeReference<ConcertDetailDTO>() {}, "redis"),
+    AVAILABLE_SEATS("available-seats", Duration.ofSeconds(3), new TypeReference<AvailableSeatsDto>() {}, "local"),
+    ALL_SEATS("all-seats", Duration.ZERO, new TypeReference<List<SeatInfoDto>>() {}, "redis"); // TTL 없음
 
     private final String cacheName;
     private final Duration expiredAfterWrite;
     private final TypeReference<?> typeRef;
+    private final String cacheStore;
 }

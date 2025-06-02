@@ -14,14 +14,20 @@ public class ConcertCacheScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     public void refreshConcertCaches() {
         try {
-            evictAllConcertCaches();
+            evictConcertLocalCaches();
+            evictConcertRedisCaches();
         } catch (Exception e) {
             log.error("스케줄러 실패: ", e);
         }
     }
 
-    @CacheEvict(value = {"concerts", "concert-detail"}, allEntries = true)
-    public void evictAllConcertCaches() {
+    @CacheEvict(cacheManager = "localCacheManager",value = "concerts", allEntries = true)
+    public void evictConcertLocalCaches() {
+        log.info("콘서트 캐시 삭제 완료");
+    }
+
+    @CacheEvict(cacheManager = "redisCacheManager",value = "concert-detail", allEntries = true)
+    public void evictConcertRedisCaches() {
         log.info("콘서트 캐시 삭제 완료");
     }
 }
