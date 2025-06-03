@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -35,8 +36,15 @@ public class ConcertFacade {
     }
 
     public AvailableSeatsResponse getAvailableSeats(Long scheduleId) {
-        AvailableSeatsDto availableSeatsdto = scheduleSeatService.getAvailableSeats(scheduleId);
-        List<SeatInfoDto> allSeats = scheduleSeatService.getAllSeats(scheduleId);
-        return AvailableSeatsResponse.from(availableSeatsdto, allSeats);
+        CompletableFuture<AvailableSeatsDto> availableSeatsTask =
+            CompletableFuture.supplyAsync(() -> scheduleSeatService.getAvailableSeats(scheduleId));
+        
+        CompletableFuture<List<SeatInfoDto>> allSeatsTask = 
+            CompletableFuture.supplyAsync(() -> scheduleSeatService.getAllSeats(scheduleId));
+
+        AvailableSeatsDto availableSeatsDto = availableSeatsTask.join();
+        List<SeatInfoDto> allSeats = allSeatsTask.join();
+
+        return AvailableSeatsResponse.from(availableSeatsDto, allSeats);
     }
 }
