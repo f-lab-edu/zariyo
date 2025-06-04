@@ -14,5 +14,7 @@ dependencies {
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.swagger.get()}"
 
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+
     testImplementation 'org.testcontainers:mysql'
 }
