@@ -6,8 +6,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.CompletableFuture;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -16,13 +14,8 @@ public class ConcertCacheScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     public void refreshConcertCaches() {
         try {
-            CompletableFuture<Void> localCacheTask =
-                    CompletableFuture.runAsync(this::evictConcertLocalCaches);
-
-            CompletableFuture<Void> redisCacheTask =
-                    CompletableFuture.runAsync(this::evictConcertRedisCaches);
-
-            CompletableFuture.allOf(localCacheTask, redisCacheTask).join();
+            evictConcertLocalCaches();
+            evictConcertRedisCaches();
         } catch (Exception e) {
             log.error("스케줄러 실패: ", e);
         }
