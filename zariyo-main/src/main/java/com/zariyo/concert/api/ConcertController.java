@@ -38,8 +38,7 @@ public class ConcertController {
 
     @GetMapping("/schedules/{scheduleId}/seats")
     public CompletableFuture<ResponseEntity<AvailableSeatsResponse>> getAvailableSeats(@PathVariable Long scheduleId) {
-        return CompletableFuture.supplyAsync(() ->
-                concertFacade.getAvailableSeatsAsync(scheduleId)
-        ).thenCompose(future -> future).thenApply(ResponseEntity::ok);
+        return concertFacade.getAvailableSeatsAsync(scheduleId)
+                .thenApply(ResponseEntity::ok);
     }
 }
