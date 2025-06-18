@@ -35,16 +35,13 @@ public class ConcertFacade {
         return ConcertDetailResponse.from(concertQueryService.getConcertDetail(concertId));
     }
 
-    public AvailableSeatsResponse getAvailableSeats(Long scheduleId) {
+    public CompletableFuture<AvailableSeatsResponse> getAvailableSeatsAsync(Long scheduleId) {
         CompletableFuture<AvailableSeatsDto> availableSeatsTask =
-            CompletableFuture.supplyAsync(() -> scheduleSeatService.getAvailableSeats(scheduleId));
-        
-        CompletableFuture<List<SeatInfoDto>> allSeatsTask = 
-            CompletableFuture.supplyAsync(() -> scheduleSeatService.getAllSeats(scheduleId));
+                CompletableFuture.supplyAsync(() -> scheduleSeatService.getAvailableSeats(scheduleId));
 
-        AvailableSeatsDto availableSeatsDto = availableSeatsTask.join();
-        List<SeatInfoDto> allSeats = allSeatsTask.join();
+        CompletableFuture<List<SeatInfoDto>> allSeatsTask =
+                CompletableFuture.supplyAsync(() -> scheduleSeatService.getAllSeats(scheduleId));
 
-        return AvailableSeatsResponse.from(availableSeatsDto, allSeats);
+        return availableSeatsTask.thenCombine(allSeatsTask, AvailableSeatsResponse::from);
     }
 }
