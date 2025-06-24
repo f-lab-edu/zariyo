@@ -1,11 +1,11 @@
 package com.zariyo.concert.application.facade;
 
-import com.zariyo.concert.api.response.AvailableSeatsResponse;
-import com.zariyo.concert.api.response.ConcertDetailResponse;
-import com.zariyo.concert.api.response.ConcertListResponse;
+import com.zariyo.concert.api.response.*;
 import com.zariyo.concert.application.dto.AvailableSeatsDto;
+import com.zariyo.concert.application.dto.ReservationStatusDto;
 import com.zariyo.concert.application.dto.SeatInfoDto;
 import com.zariyo.concert.application.service.ConcertQueryService;
+import com.zariyo.concert.application.service.ReservationService;
 import com.zariyo.concert.application.service.ScheduleSeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -21,6 +22,7 @@ public class ConcertFacade {
 
     private final ConcertQueryService concertQueryService;
     private final ScheduleSeatService scheduleSeatService;
+    private final ReservationService reservationService;
 
     public ConcertListResponse getConcerts(Pageable pageable, String sortType, Long categoryId) {
         Pageable sortedPageable = PageRequest.of(
@@ -43,5 +45,23 @@ public class ConcertFacade {
                 CompletableFuture.supplyAsync(() -> scheduleSeatService.getAllSeats(scheduleId));
 
         return availableSeatsTask.thenCombine(allSeatsTask, AvailableSeatsResponse::from);
+    }
+
+    public CompletableFuture<ReservationTokenResponse> reserveSeats(List<Long> seatIds) {
+        String reservationToken = UUID.randomUUID().toString();
+        return CompletableFuture.supplyAsync(() -> {
+            reservationService.reserveSeats(seatIds, reservationToken);
+            return ReservationTokenResponse.builder()
+                    .token(reservationToken)
+                    .redirectUrl("/api/reservations/status?token=" + reservationToken)
+                    .build();
+        });
+    }
+
+    public ReservationStatusResponse getReservationStatus(String token) {
+        ReservationStatusDto response = reservationService.getReservationStatus(token);
+        return response != null
+                ? ReservationStatusResponse.from(response)
+                : ReservationStatusResponse.nullResponse(token);
     }
 }

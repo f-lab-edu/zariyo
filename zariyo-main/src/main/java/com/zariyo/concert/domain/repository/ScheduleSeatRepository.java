@@ -7,4 +7,6 @@ import java.util.List;
 public interface ScheduleSeatRepository {
     List<ScheduleSeat> findAvailableSeatsByScheduleId(Long scheduleId);
     List<ScheduleSeat> findAllSeatsByScheduleId(Long scheduleId);
+
+    List<ScheduleSeat> findAllById(List<Long> seatIds);
 }
