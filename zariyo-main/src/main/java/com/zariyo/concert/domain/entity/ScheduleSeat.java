@@ -43,4 +43,25 @@ public class ScheduleSeat {
     public enum SeatStatus {
         AVAILABLE, PENDING, RESERVED
     }
+
+    /**
+     * 좌석 예약 처리
+     */
+    public void reserve() {
+        this.status = SeatStatus.RESERVED;
+    }
+
+    /**
+     * 좌석 선점 처리
+     */
+    public void hold() {
+        this.status = SeatStatus.PENDING;
+    }
+
+    /**
+     * 좌석 해제 (사용 가능 상태로 복구)
+     */
+    public void release() {
+        this.status = SeatStatus.AVAILABLE;
+    }
 }
