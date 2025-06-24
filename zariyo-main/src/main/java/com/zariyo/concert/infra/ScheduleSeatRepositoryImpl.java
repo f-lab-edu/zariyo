@@ -22,4 +22,9 @@ public class ScheduleSeatRepositoryImpl implements ScheduleSeatRepository {
     public List<ScheduleSeat> findAllSeatsByScheduleId(Long scheduleId) {
         return scheduleSeatJpaRepository.findAllSeatsByScheduleId(scheduleId);
     }
+
+    @Override
+    public List<ScheduleSeat> findAllById(List<Long> seatIds) {
+        return scheduleSeatJpaRepository.findAllById(seatIds);
+    }
 }
